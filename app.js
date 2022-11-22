@@ -37,12 +37,12 @@ const verifyToken = (request, response, next) => {
   if (jwtToken === undefined) {
     console.log(jwtToken);
     response.status(401);
-    response.send("Invalid Access Token");
+    response.send("Invalid JWT Token");
   } else {
     jwt.verify(jwtToken, "NITISH", async (error, payload) => {
       if (error) {
         response.status(401);
-        response.send("Invalid Access Token");
+        response.send("Invalid JWT Token");
       } else {
         next();
       }
@@ -60,7 +60,7 @@ app.post("/login/", async (request, response) => {
     const isPasswordMatched = await bcrypt.compare(password, dbUser.password);
     if (isPasswordMatched === false) {
       response.status(400);
-      response.send("Invalid Password");
+      response.send("Invalid password");
     } else {
       const payload = { username: username };
       const jwtToken = jwt.sign(payload, "NITISH");
@@ -166,7 +166,7 @@ app.put("/districts/:districtId/", verifyToken, async (request, response) => {
                             deaths = ${deaths}
                         WHERE district_id = ${districtId};`;
   const dbResponse = await db.run(updatedistrictQuery);
-  response.send("updated");
+  response.send("District Details Updated");
 });
 
 // API - EIGHT
@@ -178,3 +178,5 @@ app.get("/states/:stateId/stats/", verifyToken, async (request, response) => {
   const statsObject = await db.get(getStateStatsQuery);
   response.send(statsObject);
 });
+
+module.exports = app;
